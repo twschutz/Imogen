@@ -1,0 +1,77 @@
+{
+    "image search": [
+        "I would like to search for an image",
+        "Can I look for an image",
+        "Image search please",
+        "I want to search my photos",
+        "I am looking for an image",
+        "Can I gander for a picture",
+        "Find this picture",
+        "by chance can I search my photo library",
+        "will you allow me to get a picture",
+        "ay yo lemme search my photos for a pic",
+        "I am looking for a specific pic in my camera roll"
+    ],
+    "yes": [
+        "yes let's do it",
+        "that's for sure",
+        "for sure",
+        "absolutely",
+        "i suppose so",
+        "i guess so",
+        "yes that is correct",
+        "let's give it a try",
+        "please do",
+        "yeah correct"
+    ],
+    "no": [
+        "i don't think so",
+        "no",
+        "nope",
+        "nah",
+        "no way",
+        "let's hold off on that for now",
+        "we can come back to this later",
+        "let's revisit this later",
+        "bad idea",
+        "bad call",
+        "no not correct",
+        "that's wrong",
+        "no my name is jason actually",
+        "no you got my name and address wrong"
+    ],
+    "cancel": [
+        "cancel",
+        "call off",
+        "postpone",
+        "scrap that",
+        "let's drop the process",
+        "scrub that",
+        "abandon the process",
+        "revoke everything",
+        "write that off",
+        "repeal",
+        "forget about it"
+    ],
+    "provide name": [
+        "my name is Jason",
+        "sure here is my name",
+        "you can call me brian",
+        "you need my name? okay here they are",
+        "my first name is john last name is smith",
+        "i am tony",
+        "here is my name"
+    ],    
+    "I have a question": [
+        "i have some questions about imogen",
+        "hey can I just ask you some generic questions",
+        "what kind of questions can you answer about imogen?",
+        "are you knowledgeable about imogen? Can I ask you some questions?",
+        "can I ask you a few imogen related questions?",
+        "yo quick question",
+        "a few things I am hope you can quickly answer for me",
+        "you know about any FAQ?",
+        "are you aware of the imogen FAQs?",
+        "FAQ time, i have questions"
+    ]
+}

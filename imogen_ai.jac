@@ -1,4 +1,4 @@
-import {*} with "./faq.jac"
+import {*} with "./faq.jac";
 
 // Define the cai, dialogue root and state nodes
 node cai_state {
@@ -27,6 +27,7 @@ node cai_state {
     }
     can nlg {}
 }
+
 node dialogue_state:cai_state {
     can bi_enc.infer;
     can tfm_ner.extract_entity;
@@ -100,30 +101,46 @@ node image_search_state:dialogue_state {
     }
     can process {
         // Check entity transition
-        required_entities = -[entity_transition]->.edge[0].context["entities"];
-        if (vector.sort_by_key(visitor.wlk_ctx["entities"].d::keys) == vector.sort_by_key(required_entities)) {
-            visitor.wlk_ctx["next_state"] = -[entity_transition]->[0];
+        if(vector(visitor.wlk_ctx["entities"]).length() <= 2):
+            visitor.wlk_ctx["next_state"] = "few_entities";
             visitor.wlk_ctx["prev_state"] = here;
-        } 
-        else {
-            visitor.wlk_ctx["respond"] = true;
-        }
+        #required_entities = -[entity_transition]->.edge[0].context["entities"];
+        #if (vector.sort_by_key(visitor.wlk_ctx["entities"].d::keys) == vector.sort_by_key(required_entities)) {
+        #    visitor.wlk_ctx["next_state"] = -[entity_transition]->[0];
+        #    visitor.wlk_ctx["prev_state"] = here;
+        #} 
+        #else {
+        #    visitor.wlk_ctx["respond"] = true;
+        #}
     }
     can nlg {
-        if ("name" not in visitor.wlk_ctx["entities"]):
-            visitor.response = "What is your name?";
-        else:
-            visitor.response = "Please tell me what you are looking for in your image. The more detail you provide, the better!\n>";
+        visitor.response = "Please tell me what you are looking for in your image. The more detail you provide, the better!\n>";
     }
 }
+
+node few_entities_state:dialogue_state {
+    has name ="few_entities";
+    can nlg{
+        visitor.response = "We were only able to detect " + len(visitor.wlk_ctx["entities"]) + " entities in your seach. Would you like to try a more detailed search?";
+    }
+}
+
 node search_cancel_state:dialogue_state {
     has name ="search_cancel";
     can nlg {
-        visitor.response = "I hope I was able to find your image! I look forward to hearing from you again soon!"
+        visitor.response = "I hope I was able to find your image! I look forward to hearing from you again soon!";
     }
 }
-node search_confirm_state {
-    has name ="search_confirm";
+
+#node search_confirmed_state:dialogue_state {
+#    has name ="search_confirmed";
+#    can nlg {
+#        visitor.response = "I will now search for your image, please hang tight!";
+#    }
+#}
+
+node confirm_search_state:dialogue_state {
+    has name ="confirm_search";
     can nlu {
         if (!visitor.wlk_ctx["intent"]): ::classify_intent;
     }
@@ -136,12 +153,6 @@ node search_confirm_state {
     }
     can nlg {
         visitor.response = "Can you confirm your name to be " + visitor.wlk_ctx["entities"]["name"][0] + "?";
-    }
-}
-node search_confirmed_state {
-    has name ="search_confirmed"
-    can nlg {
-        visitor.response = "I will now search for your image, please hang tight!"
     }
 }
 
@@ -160,32 +171,21 @@ graph imogen_ai {
         dialogue_root = spawn node::dialogue_root;
         image_search_state = spawn node::image_search_state;
         search_cancel_state = spawn node::search_cancel_state;
-        search_confirm_state = spawn node::search_confirm_state;
+        confirm_search_state = spawn node::confirm_search_state;
 
         dialogue_root -[intent_transition(intent="image search")]-> image_search_state;
         image_search_state -[intent_transition(intent="cancel")]-> search_cancel_state;
-        image_search_state -[entity_transition(entities=["name"])]-> search_confirm_state;
+        #image_search_state -[intent_transition(intent="few entities")]-> few_entities_state;
+        #few_entities_state -[intent_transition(intent="yes")]-> image_search_state;
+        #few_entities_state -[intent_transition(intent="no")]-> confirm_search_state;
+        image_search_state -[entity_transition(entities=["name"])]-> confirm_search_state;
         image_search_state -[intent_transition(intent="provide name")]-> image_search_state;
-        search_confirm_state -[intent_transition(intent="cancel")]-> search_cancel_state;
-        search_confirm_state -[intent_transition(intent="yes")]-> search_confirmed_state;
-        search_confirm_state -[intent_transition(intent="no")]-> image_search_state;
+        confirm_search_state -[intent_transition(intent="cancel")]-> search_cancel_state;
+        #confirm_search_state -[intent_transition(intent="yes")]-> search_confirmed_state;
+        confirm_search_state -[intent_transition(intent="no")]-> image_search_state;
 
-        faq_root = spawn graph::faq;
-        dialogue_root -[intent_transition(intent="I have a question")]-> faq_root;
-    }
-}
-
-
-graph dialogue_system {
-    has anchor dialogue_root;
-    spawn {
-        dialogue_root = spawn node::dialogue_root;
-        image_search_state = spawn node::dialogue_state(
-            name = "image_search",
-            response = "Please tell me what you are looking for in your image. The more detail you provide, the better!\n>"
-        );
-
-        dialogue_root -[intent_transition(intent="search for image")]-> image_search_state;
+        #faq_root = spawn node::faq_root;
+        #dialogue_root -[intent_transition(intent="I have a question")]-> faq_root;
     }
 }
 

@@ -1,4 +1,4 @@
-import {node::cai_state} with "./imogen_ai.jac"
+import {node::cai_state} with "./imogen_ai.jac";
 
 // Root node and state node definition
 node faq_root:cai_state {
@@ -26,7 +26,7 @@ node faq_root:cai_state {
         }
     }
     can nlg {
-        visitor.response = "Hi, I'm Imogen! Do you have any questions for me? ";
+        visitor.response = "I'll do my best to answer your questions. What would you like to ask? ";
     }
 }
 node faq_state:cai_state {
@@ -38,13 +38,13 @@ node faq_state:cai_state {
 }
 
 // Define a walker to initialize the graph
-walker init {
-    root {
-        spawn here --> node::faq_root;
-        spawn here walker::ingest_faq(kb_file="imogen_faq.json");
-        spawn here walker::ask;
-    }
-}
+#walker init {
+#    root {
+#        spawn here --> node::faq_root;
+#        spawn here walker::ingest_faq(kb_file="imogen_faq.json");
+#        spawn here walker::ask;
+#    }
+#}
 
 // Define a walker to ask a question
 walker ask {

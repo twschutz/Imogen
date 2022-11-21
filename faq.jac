@@ -29,6 +29,7 @@ node faq_root:cai_state {
         visitor.response = "I'll do my best to answer your questions. What would you like to ask? ";
     }
 }
+
 node faq_state:cai_state {
     has question;
     has answer;
@@ -38,13 +39,13 @@ node faq_state:cai_state {
 }
 
 // Define a walker to initialize the graph
-#walker init {
-#    root {
-#        spawn here --> node::faq_root;
-#        spawn here walker::ingest_faq(kb_file="imogen_faq.json");
-#        spawn here walker::ask;
-#    }
-#}
+walker init {
+    root {
+        spawn here --> node::faq_root;
+        spawn here walker::ingest_faq(kb_file="imogen_faq.json");
+        spawn here walker::ask;
+    }
+}
 
 // Define a walker to ask a question
 walker ask {

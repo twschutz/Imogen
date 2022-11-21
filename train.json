@@ -22,7 +22,10 @@
         "yes that is correct",
         "let's give it a try",
         "please do",
-        "yeah correct"
+        "yeah correct",
+        "yes i'm done",
+        "yep, I'm all finished",
+        "I have completed"
     ],
     "no": [
         "i don't think so",
@@ -52,16 +55,7 @@
         "write that off",
         "repeal",
         "forget about it"
-    ],
-    "provide name": [
-        "my name is Jason",
-        "sure here is my name",
-        "you can call me brian",
-        "you need my name? okay here they are",
-        "my first name is john last name is smith",
-        "i am tony",
-        "here is my name"
-    ],    
+    ],   
     "I have a question": [
         "i have some questions about imogen",
         "hey can I just ask you some generic questions",
@@ -73,5 +67,20 @@
         "you know about any FAQ?",
         "are you aware of the imogen FAQs?",
         "FAQ time, i have questions"
+    ],
+    "add": [
+        "add entities",
+        "add",
+        "add on",
+        "add on entities",
+        "I want to add",
+        "I would like to add on entities please"
+    ],
+    "delete": [
+        "delete",
+        "I wanna delete",
+        "delete please",
+        "delete entities",
+        "I want to delete entities"
     ]
 }

@@ -88,10 +88,12 @@ node confirm_search_state:dialogue_state {
     }
     can nlg {
         string = "";
-        index="i";
-        for value in visitor.wlk_ctx["entities"].d::values[0] {
-            string+= "Entity [" + index + "]: " + value + "\n";
-            index+="i";
+        index=0;
+        for category in visitor.wlk_ctx["entities"].d::keys {
+            for value in visitor.wlk_ctx["entities"][category] {
+                string+= "Entity [" + index.str + "]: " + value + "\n";
+                index+=1;
+            }
         }
         visitor.response = "Here are the entities I found...\n" + string + "Is that correct?";
     }
@@ -157,64 +159,89 @@ node modify_search_state:dialogue_state {
 
 node add_search_state:dialogue_state {
     has name = "add_state";
-    has response = "";
-    has intent = false;
+    has category = "";
+    has entity = "";
     can nlu {
         if not visitor.wlk_ctx["intent"] {
-            if response == "" {
-                response = visitor.question;
+            if category == "" {
+                category = visitor.question;
+            }
+            elif entity == "" {
+                entity = visitor.question;
             }
             ::classify_intent;
         }
     }
     can process {
-        if response == "" or intent == false {
+        if category == "" or entity == ""{
             visitor.wlk_ctx["respond"] = true;
         }
         else {
-            visitor.wlk_ctx["next_state"] = -[intent_transition(intent==visitor.wlk_ctx["intent"])]->[0];
+            if category in visitor.wlk_ctx["entities"] {
+                visitor.wlk_ctx["entities"][category].l::append(entity);
+            }
+            else {
+                 visitor.wlk_ctx["entities"][category] = entity;
+            }
+            category = ""; entity = "";
+            visitor.wlk_ctx["next_state"] = -[intent_transition(intent=="confirm")]->[0];
             visitor.wlk_ctx["prev_state"] = here;
         }
     }
     can nlg {
-        if response == "" {
-            visitor.response = "What entities would you like to add?";
+        if category == "" {
+            visitor.response = "What category does your entity fall into? (name, location, object)";
         }
-        else {
-            visitor.response = "Would you like to delete entities as well?";
-            intent = true;
+        elif entity == "" {
+            visitor.response = "What is the name of the entity with category = " + category + " which you are adding?";
         }
     }
 }
 
 node delete_search_state:dialogue_state {
     has name = "delete_state";
-    has response = "";
-    has intent = false;
+    has category = "";
+    has indexstr = "";
     can nlu {
         if not visitor.wlk_ctx["intent"] {
-            if response == "" {
-                response = visitor.question;
+            if category == "" {
+                category = visitor.question;
+            }
+            elif indexstr == "" {
+                indexstr = visitor.question;
             }
             ::classify_intent;
         }   
     }
     can process {
-        if response == "" or intent == false {
+        if category == "" or indexstr == "" {
             visitor.wlk_ctx["respond"] = true;
         }
         else {
+            delIndex = -1;
+            for i in [0,1,2,3,4,5,6,7,8,9] {
+                if i.str == indexstr {
+                    delIndex = i;
+                    break;
+                }
+            }
+            visitor.wlk_ctx["entities"][category].list::pop(delIndex);
             visitor.wlk_ctx["next_state"] = -[intent_transition(intent==visitor.wlk_ctx["intent"])]->[0];
             visitor.wlk_ctx["prev_state"] = here;
         }
     }
     can nlg {
-        if response == "" {
-            visitor.response = "What entities would you like to delete?";
+        if category == "" {
+            visitor.response = "What category is the entity you would like to delete? (name, location, object)";
         }
-        else {
-            visitor.response = "Would you like to add entities as well?";
-            intent = true;
+        elif indexstr == "" {
+            string = "";
+            index = 0;
+            for value in visitor.wlk_ctx["entities"][category] {
+                string+= "Entity [" + index.str + "]: " + value + "\n";
+                index+=1;
+            }
+            visitor.response = "What is the index of the entity which you wish to delete? (0, 1, 2, ...)\n" + string;
         }
     }
 }
@@ -238,10 +265,8 @@ graph dialogue_system {
         confirm_search_state -[intent_transition(intent="no")]-> modify_search_state;
         modify_search_state -[intent_transition(intent="add")]-> add_search_state;
         modify_search_state -[intent_transition(intent="delete")]-> delete_search_state;
-        add_search_state -[intent_transition(intent="no")]-> confirm_search_state;
-        delete_search_state -[intent_transition(intent="no")]-> confirm_search_state;
-        add_search_state -[intent_transition(intent="yes")]-> delete_search_state;
-        delete_search_state -[intent_transition(intent="yes")]-> add_search_state;
+        add_search_state -[intent_transition(intent="confirm")]-> confirm_search_state;
+        delete_search_state -[intent_transition(intent="confirm")]-> confirm_search_state;
     }
 }
 

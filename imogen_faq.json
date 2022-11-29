@@ -1,0 +1,22 @@
+[
+    {
+      "question": "What can I search for?",
+      "answer": "Currently, searching for people, background features, and specific features in images (pets, a house, etc.) is supported. Stay tuned for more features to be added!"
+    },
+    {
+      "question": "How does Imogen deal with picture privacy?",
+      "answer": "Currently, none of your images are stored by Imogen after you leave the app. If we later decide to store your images, they will be for your use only and will never be used other than to generate better recommendations for you."
+    },
+    {
+        "question": "What is this application?",
+        "answer": "I can help you search for people, places, and things in your images!"
+    },
+    {
+        "question": "How do I search for images?",
+        "answer": "To search for images, simply type a description of the picture you are looking for in the text box and click 'Submit'!"
+    },
+    {
+        "question": "Can you find my image?",
+        "answer": "I'll do my best to find the image you're looking for! The more detailed the description the better!"
+    }
+  ]
